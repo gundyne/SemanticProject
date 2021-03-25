@@ -45,7 +45,6 @@ g.bind('earthpermit', n)
 #Class Creation
 g.add( (n.Permit, RDFS.subClassOf, OWL.Thing) )
 g.add( (n.Earthquake, RDFS.subClassOf, OWL.Thing) )
-g.add( (n.Month, RDFS.subClassOf, OWL.Thing) )
 g.add( (n.Earthquake, OWL.disjointWith, n.Permit) )
 
 g.add( (n.Region, RDFS.subClassOf, OWL.Thing) )
@@ -65,9 +64,10 @@ g.add( (p.talliedOn, RDFS.subPropertyOf, OWL.topObjectProperty) )
 #earthquake to region
 g.add( (p.locatedAt, RDFS.subPropertyOf, OWL.topObjectProperty) )
 
-g.add( (p.numberAuthorized, RDFS.subPropertyOf, OWL.topDataProperty) )
-g.add( (p.month, RDFS.subPropertyOf, OWL.topDataProperty) )
-g.add( (p.location, RDFS.subPropertyOf, OWL.topDataProperty) )
+g.add( (p.numberAuthorized, RDFS.subPropertyOf, RDFS.label) )
+g.add( (p.month, RDFS.subPropertyOf, RDFS.label) )
+g.add( (p.location, RDFS.subPropertyOf, RDFS.label) )
+g.add( (p.magnitude, RDFS.subPropertyOf, RDFS.label) )
 
 #sending the data
 for i in range(permits.shape[0]):
@@ -76,24 +76,25 @@ for i in range(permits.shape[0]):
     permitTestM = URIRef("http://example.org/Permit/permitM"+str(i))
     permitTestW = URIRef("http://example.org/Permit/permitW"+str(i))
     permitTestS = URIRef("http://example.org/Permit/permitS"+str(i))
+    # setting permit objects as Permit
     g.add( (permitTestA,RDF.type,n.Permit) )
     g.add( (permitTestN,RDF.type,n.Permit) )
     g.add( (permitTestM,RDF.type,n.Permit) )
     g.add( (permitTestW,RDF.type,n.Permit) )
     g.add( (permitTestS,RDF.type,n.Permit) )
+    # units authorized
     g.add( (permitTestA,p.numberAuthorized,Literal(int(permits[i][1] * 1000), datatype=XSD.integer)) )
     g.add( (permitTestN,p.numberAuthorized,Literal(int(permits[i][6] * 1000), datatype=XSD.integer)) )
     g.add( (permitTestM,p.numberAuthorized,Literal(int(permits[i][8] * 1000), datatype=XSD.integer)) )
     g.add( (permitTestS,p.numberAuthorized,Literal(int(permits[i][10] * 1000), datatype=XSD.integer)) )
     g.add( (permitTestW,p.numberAuthorized,Literal(int(permits[i][12] * 1000), datatype=XSD.integer)) )
-    monthTest = URIRef("http://example.org/Month/month"+str(i))
-    g.add( (monthTest,RDF.type,n.Month) )
-    g.add( (monthTest,p.month,Literal(permits[i][0].date(), datatype=XSD.date))) 
-    g.add( (permitTestA,p.authorizedOn,monthTest)) 
-    g.add( (permitTestN,p.authorizedOn,monthTest))
-    g.add( (permitTestM,p.authorizedOn,monthTest))
-    g.add( (permitTestW,p.authorizedOn,monthTest))
-    g.add( (permitTestS,p.authorizedOn,monthTest))
+    # months
+    g.add( (permitTestA,p.authorizedOn,Literal(permits[i][0].date(), datatype=XSD.date))) 
+    g.add( (permitTestN,p.authorizedOn,Literal(permits[i][0].date(), datatype=XSD.date)))
+    g.add( (permitTestM,p.authorizedOn,Literal(permits[i][0].date(), datatype=XSD.date)))
+    g.add( (permitTestW,p.authorizedOn,Literal(permits[i][0].date(), datatype=XSD.date)))
+    g.add( (permitTestS,p.authorizedOn,Literal(permits[i][0].date(), datatype=XSD.date)))
+    #regions
     g.add( (permitTestA,p.talliedOn,n.All))
     g.add( (permitTestN,p.talliedOn,n.Northeast))
     g.add( (permitTestM,p.talliedOn,n.Midwest))
@@ -103,8 +104,7 @@ for i in range(permits.shape[0]):
 for i in range(earthquakes.shape[0]):
     earthquakeTest = URIRef("http://example.org/Earthquake/quake"+str(i))
     g.add( (earthquakeTest,RDF.type,n.Earthquake) )
-    month = g.value(None, p.month, (Literal(datetime.date(earthquakes[i][1],earthquakes[i][2],1),  datatype=XSD.date)))
-    g.add( (earthquakeTest,p.shookOn, month) )
+    g.add( (earthquakeTest,p.shookOn, (Literal(datetime.date(earthquakes[i][1],earthquakes[i][2],1),  datatype=XSD.date))) )
     g.add( (earthquakeTest,p.location,(Literal(earthquakes[i][9], datatype=XSD.string)) ) )
     g.add( (earthquakeTest,p.magnitude,(Literal(earthquakes[i][13], datatype=XSD.decimal)) ) )
     regionNum = get_Region(earthquakes[i][9])
@@ -118,5 +118,5 @@ for i in range(earthquakes.shape[0]):
         g.add( (earthquakeTest,p.locatedAt, n.West) )
         
     
-#exporting file as .rdf file
-g.serialize("test.owl", format="xml")
+#exporting file as .owl file
+g.serialize("output.owl", format="xml")
