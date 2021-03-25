@@ -44,7 +44,7 @@ for i in range(permits.shape[0]):
     
 for i in range(earthquakes.shape[0]):
     earthquakeTest = URIRef("http://example.org/Earthquake/quake"+str(i))
-    g.add( (permitTest,RDF.type,n.Earthquake) )
+    g.add( (earthquakeTest,RDF.type,n.Earthquake) )
     g.add( (earthquakeTest,n.shookOn,(Literal(datetime.date(earthquakes[i][1],earthquakes[i][2],1),  datatype=XSD.date)) ) )
     g.add( (earthquakeTest,n.location,(Literal(earthquakes[i][9], datatype=XSD.string)) ) )
     
