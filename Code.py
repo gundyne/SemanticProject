@@ -119,4 +119,4 @@ for i in range(earthquakes.shape[0]):
         
     
 #exporting file as .owl file
-g.serialize("output.owl", format="xml")
+g.serialize("output.owl", format="pretty-xml")
